@@ -36,8 +36,17 @@ def enrich_with_ppld(email=None, name=None, company=None):
     return response.json()
 
 def enrich_with_apollo(email):
-    url = f"https://api.apollo.io/v1/people/match?api_key={APOLLO_KEY}&email={email}"
-    response = requests.get(url)
+    url = f"https://api.apollo.io/v1/people/match"
+    headers = {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'User-Agent': 'AI-Lead-Enrichment/1.0'
+    }
+    params = {
+        'api_key': APOLLO_KEY,
+        'email': email
+    }
+    response = requests.get(url, headers=headers, params=params)
     return response.json()
 
 def enrich_with_hunter(domain):

@@ -294,18 +294,26 @@ def send_email_with_gmail(recipient: str, subject: str, body: str) -> Union[bool
     """Send email using Gmail SMTP with improved error handling"""
     
     # Validate credentials
-    if SENDER_EMAIL_ID == "your_gmail_address@gmail.com" or APP_PASSWORD == "your_gmail_app_password":
-        return "Please update SENDER_EMAIL_ID and APP_PASSWORD in utils.py with your actual Gmail credentials."
+    if (SENDER_EMAIL_ID == "your_gmail_address@gmail.com" or 
+        APP_PASSWORD == "your_gmail_app_password" or
+        not SENDER_EMAIL_ID or not APP_PASSWORD):
+        return "⚠️ Email credentials not configured. Please set SENDER_EMAIL_ID and APP_PASSWORD in your environment variables or Streamlit secrets."
     
     # Validate inputs
     if not recipient or not subject or not body:
-        return "Recipient, subject, and body must all be provided."
+        return "❌ Recipient, subject, and body must all be provided."
     
-    # Validate email format
-    if "@" not in recipient or "." not in recipient:
-        return "Invalid recipient email format."
+    # Validate email format (basic check)
+    if "@" not in recipient or "." not in recipient.split("@")[-1]:
+        return "❌ Invalid recipient email format."
     
+    server = None
     try:
+        print(f"📧 Starting email send process...")
+        print(f"📧 To: {recipient}")
+        print(f"📧 From: {SENDER_EMAIL_ID}")
+        print(f"📧 Subject: {subject[:50]}...")
+        
         # Create message
         msg = MIMEMultipart()
         msg['From'] = str(SENDER_EMAIL_ID)
@@ -315,12 +323,12 @@ def send_email_with_gmail(recipient: str, subject: str, body: str) -> Union[bool
         # Add body as HTML for better formatting
         msg.attach(MIMEText(body, 'html'))
         
-        print(f"📧 Attempting to send email to: {recipient}")
-        print(f"📧 From: {SENDER_EMAIL_ID}")
-        print(f"📧 Subject: {subject}")
+        # Connect to Gmail SMTP with timeout
+        print("📧 Connecting to Gmail SMTP server...")
+        server = smtplib.SMTP('smtp.gmail.com', 587, timeout=30)
+        server.set_debuglevel(0)  # Set to 1 for debugging
         
-        # Connect to Gmail SMTP
-        server = smtplib.SMTP('smtp.gmail.com', 587)
+        print("📧 Starting TLS encryption...")
         server.starttls()
         
         print("📧 Logging into Gmail...")
@@ -328,25 +336,46 @@ def send_email_with_gmail(recipient: str, subject: str, body: str) -> Union[bool
         
         print("📧 Sending email...")
         text = msg.as_string()
-        server.sendmail(str(SENDER_EMAIL_ID), str(recipient), text)
-        server.quit()
+        server.sendmail(str(SENDER_EMAIL_ID), [str(recipient)], text)
         
         print("✅ Email sent successfully!")
         return True
         
     except smtplib.SMTPAuthenticationError as e:
-        error_msg = f"Gmail authentication failed. Check your email and app password. Error: {str(e)}"
+        error_msg = f"🔐 Gmail authentication failed. Please check:\n1. Email address is correct\n2. App password is valid (not your regular password)\n3. 2FA is enabled on your Gmail account\n\nError: {str(e)}"
         print(f"❌ {error_msg}")
         return error_msg
+        
     except smtplib.SMTPRecipientsRefused as e:
-        error_msg = f"Recipient email refused: {str(e)}"
+        error_msg = f"📧 Recipient email address was refused by the server: {str(e)}"
         print(f"❌ {error_msg}")
         return error_msg
+        
     except smtplib.SMTPServerDisconnected as e:
-        error_msg = f"SMTP server disconnected: {str(e)}"
+        error_msg = f"🔌 SMTP server connection was lost: {str(e)}"
         print(f"❌ {error_msg}")
         return error_msg
-    except Exception as e:
-        error_msg = f"Email sending failed: {str(e)}"
+        
+    except smtplib.SMTPConnectError as e:
+        error_msg = f"🌐 Could not connect to Gmail SMTP server. Check your internet connection: {str(e)}"
         print(f"❌ {error_msg}")
-        return error_msg 
+        return error_msg
+        
+    except smtplib.SMTPException as e:
+        error_msg = f"📧 SMTP error occurred: {str(e)}"
+        print(f"❌ {error_msg}")
+        return error_msg
+        
+    except Exception as e:
+        error_msg = f"💥 Unexpected error during email sending: {str(e)}"
+        print(f"❌ {error_msg}")
+        return error_msg
+        
+    finally:
+        # Always close the server connection
+        if server:
+            try:
+                server.quit()
+                print("📧 SMTP connection closed.")
+            except:
+                pass  # Connection might already be closed 
