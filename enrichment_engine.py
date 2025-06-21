@@ -40,10 +40,10 @@ def enrich_with_apollo(email):
     headers = {
         'Content-Type': 'application/json',
         'Cache-Control': 'no-cache',
-        'User-Agent': 'AI-Lead-Enrichment/1.0'
+        'User-Agent': 'AI-Lead-Enrichment/1.0',
+        'X-Api-Key': APOLLO_KEY  # API key goes in header for security
     }
     params = {
-        'api_key': APOLLO_KEY,
         'email': email
     }
     response = requests.get(url, headers=headers, params=params)
