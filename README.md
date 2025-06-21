@@ -107,6 +107,10 @@ git push -u origin main
    APOLLO_API_KEY = "your_key_here"
    HUNTER_API_KEY = "your_key_here"
    SERP_API_KEY = "your_key_here"
+   
+   # Optional: For email features
+   SENDER_EMAIL_ID = "your_gmail@gmail.com"
+   APP_PASSWORD = "your_gmail_app_password"
    ```
    - Click "Deploy"
 

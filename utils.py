@@ -25,8 +25,15 @@ else:
     client = None
     print("WARNING: OpenAI client not initialized - API key missing")
 
-SENDER_EMAIL_ID = "farizanjum2018@gmail.com"  # Replace with your Gmail
-APP_PASSWORD = "shffrnhaustw qxvu"  # Gmail App Password (16 chars, no spaces)
+# Load email credentials from environment variables or Streamlit secrets
+try:
+    # Try Streamlit secrets first (for Streamlit Cloud)
+    SENDER_EMAIL_ID = st.secrets.get("SENDER_EMAIL_ID", "your_gmail_address@gmail.com")
+    APP_PASSWORD = st.secrets.get("APP_PASSWORD", "your_gmail_app_password")
+except:
+    # Fallback to environment variables (for local development)
+    SENDER_EMAIL_ID = os.getenv("SENDER_EMAIL_ID", "your_gmail_address@gmail.com")
+    APP_PASSWORD = os.getenv("APP_PASSWORD", "your_gmail_app_password")
 
 print("DEBUG: SENDER_EMAIL_ID loaded:", "YES" if SENDER_EMAIL_ID != "your_gmail_address@gmail.com" else "PLACEHOLDER")
 print("DEBUG: APP_PASSWORD loaded:", "YES" if APP_PASSWORD != "your_gmail_app_password" else "PLACEHOLDER")

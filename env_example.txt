@@ -14,4 +14,8 @@ APOLLO_API_KEY=your_apollo_api_key_here
 HUNTER_API_KEY=your_hunter_api_key_here
 
 # SERP API Key (for Google search)
-SERP_API_KEY=your_serp_api_key_here 
+SERP_API_KEY=your_serp_api_key_here
+
+# Gmail Configuration (optional - for email features)
+SENDER_EMAIL_ID=your_gmail_address@gmail.com
+APP_PASSWORD=your_gmail_app_password 
