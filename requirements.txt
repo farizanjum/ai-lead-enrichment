@@ -1,0 +1,5 @@
+streamlit
+openai
+requests
+python-dotenv
+# smtplib and email are part of the Python standard library, no need to install 

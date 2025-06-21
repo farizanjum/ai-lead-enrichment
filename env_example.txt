@@ -1,0 +1,17 @@
+# AI Lead Enrichment - Environment Variables
+# Copy these variables to your Streamlit secrets or environment
+
+# OpenAI API Key (for GPT-4 analysis)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# PeopleDataLabs API Key
+PEOPLEDATALABS_API_KEY=your_peopledatalabs_api_key_here
+
+# Apollo.io API Key  
+APOLLO_API_KEY=your_apollo_api_key_here
+
+# Hunter.io API Key
+HUNTER_API_KEY=your_hunter_api_key_here
+
+# SERP API Key (for Google search)
+SERP_API_KEY=your_serp_api_key_here 
